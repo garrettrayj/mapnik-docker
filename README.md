@@ -1,6 +1,14 @@
 # Mapnik Docker
 
-A pull-n-play Docker image for Mapnik. Includes support for GDAL, Postgres, Cairo, and more.
+A pull-n-play [Docker](https://www.docker.com/) image for [Mapnik](http://mapnik.org/),
+a geospatial visualization and processing toolkit.
+
+Designed to be a base image for map tile servers and spatial processing nodes. Explore all the options
+without waiting for the rather long compile times for both Boost and Mapnik.
+
+* Based on CentOS 7
+* The complete Mapnik experience with all input plugins and output formats.
+* LLVM/Clang C++ environment
 
 ## Getting Started
 
