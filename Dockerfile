@@ -1,6 +1,7 @@
 FROM centos:7
 
-ENV MAPNIK_INSTALL_VERSION 3.0.9
+ENV BOOST_INSTALL_VERSION 1.60.0
+ENV MAPNIK_INSTALL_VERSION 3.0.10
 
 RUN yum -y update
 
@@ -24,6 +25,7 @@ RUN yum -y install epel-release && \
         sqlite-devel \
         tar \
         wget \
+        which \
     && \
     yum clean all
 
@@ -33,11 +35,13 @@ ENV CPP /usr/bin/clang-cpp
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 RUN cd /opt && \
-    wget -nv http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.bz2
+    export BOOST_DOWNLOAD_VERSION=$(echo $BOOST_INSTALL_VERSION | tr . _) && \
+    wget -nv http://downloads.sourceforge.net/project/boost/boost/${BOOST_INSTALL_VERSION}/boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2
 
 RUN cd /opt && \
-    tar -xjf boost_1_59_0.tar.bz2 && \
-    cd /opt/boost_1_59_0 && \
+    export BOOST_DOWNLOAD_VERSION=$(echo $BOOST_INSTALL_VERSION | tr . _) && \
+    tar -xjf boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2 && \
+    cd /opt/boost_${BOOST_DOWNLOAD_VERSION} && \
     ./bootstrap.sh --with-toolset=clang && \
     ./b2 install toolset=clang
 
