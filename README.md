@@ -14,7 +14,7 @@ without waiting for the rather long compile times for both Boost and Mapnik.
 Getting Started
 ---------------
 
-    docker run -it garrettrayj/mapnik
+    docker run -it garrettrayj/mapnik-docker
 
 Take a look around...
 
