@@ -43,7 +43,7 @@ RUN cd /opt && \
     tar -xjf boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2 && \
     cd /opt/boost_${BOOST_DOWNLOAD_VERSION} && \
     ./bootstrap.sh --with-toolset=clang && \
-    ./b2 install toolset=clang
+    ./b2 install toolset=clang -d0
 
 RUN cd /opt && \
     wget -nv https://mapnik.s3.amazonaws.com/dist/v${MAPNIK_INSTALL_VERSION}/mapnik-v${MAPNIK_INSTALL_VERSION}.tar.bz2
@@ -52,5 +52,5 @@ RUN cd /opt && \
     tar -xjf mapnik-v${MAPNIK_INSTALL_VERSION}.tar.bz2 && \
     cd /opt/mapnik-v${MAPNIK_INSTALL_VERSION} && \
     ./configure CXX=clang++ CC=clang && \
-    make && \
+    make --silent && \
     make install
