@@ -3,14 +3,15 @@ FROM centos:7
 ENV BOOST_INSTALL_VERSION 1.60.0
 ENV MAPNIK_INSTALL_VERSION 3.0.10
 
-RUN yum -y update
-
-RUN yum -y install epel-release && \
+RUN yum -y update && \
+    yum -y install epel-release && \
+    yum -y install https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm && \
     yum -y install \
         bzip2 \
         bzip2-devel \
         cairo-devel \
         clang \
+        file \
         gcc-c++ \
         gdal-devel \
         harfbuzz-devel \
@@ -18,7 +19,8 @@ RUN yum -y install epel-release && \
         libtiff-devel \
         libwebp-devel \
         make \
-        postgresql-devel \
+        postgresql94-devel \
+        postgis2_94-devel \
         proj-devel \
         proj-epsg \
         python-devel \
@@ -29,9 +31,9 @@ RUN yum -y install epel-release && \
     && \
     yum clean all
 
+ENV PATH /usr/pgsql-9.4/bin:$PATH
 ENV CC /usr/bin/clang
 ENV CXX /usr/bin/clang++
-ENV CPP /usr/bin/clang-cpp
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 RUN cd /opt && \
