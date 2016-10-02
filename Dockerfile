@@ -1,11 +1,15 @@
 FROM centos:7
 
-ENV BOOST_INSTALL_VERSION 1.60.0
-ENV MAPNIK_INSTALL_VERSION 3.0.10
+ENV BOOST_INSTALL_VERSION=1.60.0 \
+    MAPNIK_INSTALL_VERSION=3.0.12 \
+    PATH=/usr/pgsql-9.5/bin:$PATH \
+    CC=/usr/bin/clang \
+    CXX=/usr/bin/clang++ \
+    LD_LIBRARY_PATH=/usr/local/lib
 
 RUN yum -y update && \
     yum -y install epel-release && \
-    yum -y install https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-2.noarch.rpm && \
+    yum -y install https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm && \
     yum -y install \
         bzip2 \
         bzip2-devel \
@@ -14,13 +18,14 @@ RUN yum -y update && \
         file \
         gcc-c++ \
         gdal-devel \
+        git \
         harfbuzz-devel \
         libjpeg-turbo-devel \
         libtiff-devel \
         libwebp-devel \
         make \
-        postgresql94-devel \
-        postgis2_94-devel \
+        postgresql95-devel \
+        postgis2_95-devel \
         proj-devel \
         proj-epsg \
         python-devel \
@@ -29,30 +34,18 @@ RUN yum -y update && \
         wget \
         which \
     && \
-    yum clean all
-
-ENV PATH /usr/pgsql-9.4/bin:$PATH
-ENV CC /usr/bin/clang
-ENV CXX /usr/bin/clang++
-ENV LD_LIBRARY_PATH /usr/local/lib
-
-RUN cd /opt && \
+    yum clean all && \
+    cd /opt && \
     export BOOST_DOWNLOAD_VERSION=$(echo $BOOST_INSTALL_VERSION | tr . _) && \
-    wget -nv http://downloads.sourceforge.net/project/boost/boost/${BOOST_INSTALL_VERSION}/boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2
-
-RUN cd /opt && \
+    wget -nv http://downloads.sourceforge.net/project/boost/boost/${BOOST_INSTALL_VERSION}/boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2 && \
     export BOOST_DOWNLOAD_VERSION=$(echo $BOOST_INSTALL_VERSION | tr . _) && \
     tar -xjf boost_${BOOST_DOWNLOAD_VERSION}.tar.bz2 && \
     cd /opt/boost_${BOOST_DOWNLOAD_VERSION} && \
     ./bootstrap.sh --with-toolset=clang && \
-    ./b2 install toolset=clang -d0
-
-RUN cd /opt && \
-    wget -nv https://mapnik.s3.amazonaws.com/dist/v${MAPNIK_INSTALL_VERSION}/mapnik-v${MAPNIK_INSTALL_VERSION}.tar.bz2
-
-RUN cd /opt && \
-    tar -xjf mapnik-v${MAPNIK_INSTALL_VERSION}.tar.bz2 && \
-    cd /opt/mapnik-v${MAPNIK_INSTALL_VERSION} && \
+    ./b2 install toolset=clang -d0 && \
+    cd /opt && \
+    git clone -b v${MAPNIK_INSTALL_VERSION} --single-branch --recursive https://github.com/mapnik/mapnik.git mapnik-${MAPNIK_INSTALL_VERSION} && \
+    cd /opt/mapnik-${MAPNIK_INSTALL_VERSION} && \
     ./configure CXX=clang++ CC=clang && \
     make --silent && \
     make install
